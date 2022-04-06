@@ -6,9 +6,9 @@ import com.demo.app.user.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,13 +18,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-        List<User> list = userRepository.findAll();
-        return list;
+    public Flux<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override
-    public User save(User user) {
+    public Mono<User> save(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Mono<User> findById(String id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public Mono<User> update(User user,String id) {
+        return userRepository.findById(id).flatMap(x->{
+            x.setName(user.getName());
+            x.setLastName(user.getLastName());
+            x.setEmail(user.getEmail());
+            return userRepository.save(x);
+        });
+    }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return userRepository.deleteById(id);
     }
 }

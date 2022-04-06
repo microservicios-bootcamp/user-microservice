@@ -1,10 +1,14 @@
 package com.demo.app.user.services;
 
 import com.demo.app.user.entities.User;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 public interface UserService {
-    List<User> findAll();
-    User save(User user);
+    Flux<User> findAll();
+    Mono<User> save(User user);
+    Mono<User> findById(String id);
+    Mono<User> update(User user,String id);
+    Mono<Void> delete(String id);
 }
