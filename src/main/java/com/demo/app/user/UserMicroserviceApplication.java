@@ -1,13 +1,14 @@
-package com.app.user;
+package com.demo.app.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
-public class UserMicroseviceApplication {
+public class UserMicroserviceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserMicroseviceApplication.class, args);
+        SpringApplication.run(UserMicroserviceApplication.class, args);
     }
 
 }
