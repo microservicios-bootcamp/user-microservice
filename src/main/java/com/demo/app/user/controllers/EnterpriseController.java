@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/enterprise")
+@RequestMapping("/enterprise")
 public class EnterpriseController {
     private final EnterpriseService enterpriseService;
 

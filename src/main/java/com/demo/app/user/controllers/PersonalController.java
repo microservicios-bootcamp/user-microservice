@@ -1,15 +1,18 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Personal;
+import com.demo.app.user.models.PasiveCard;
 import com.demo.app.user.services.PersonalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/personal")
+@RequestMapping("/personal")
 public class PersonalController {
     private final PersonalService personalService;
 
@@ -22,14 +25,13 @@ public class PersonalController {
         Flux<Personal> personal = personalService.findAll();
         return ResponseEntity.ok(personal);
     }
-
     @GetMapping("/{id}")
     private Mono<ResponseEntity<Personal>> findById(@PathVariable String id){
         return personalService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    private ResponseEntity<Mono<Personal>> save(@RequestBody Personal personal){
+    private ResponseEntity<?> save(@RequestBody Personal personal){
         return ResponseEntity.ok(personalService.save(personal));
     }
     @PutMapping("/{id}")

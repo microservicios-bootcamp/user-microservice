@@ -1,11 +1,13 @@
 package com.demo.app.user.entities;
 
+import com.demo.app.user.models.PasiveCard;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.persistence.OneToOne;
 import javax.validation.constraints.*;
 
 @JsonPropertyOrder({"id","name","lastName","email","number","dni","createdAt","updateAt"})
@@ -32,4 +34,7 @@ public class Personal extends Audit{
     @NotEmpty
     @Size(min = 9,max = 9)
     private String number;
+
+    @OneToOne
+    private PasiveCard pasiveCard;
 }
