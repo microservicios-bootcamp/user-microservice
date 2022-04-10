@@ -4,6 +4,7 @@ import com.demo.app.user.models.PasiveCard;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,7 +14,7 @@ import javax.validation.constraints.*;
 @JsonPropertyOrder({"id","name","lastName","email","number","dni","createdAt","updateAt"})
 @Document(collection = "personal")
 @Data
-public class Personal extends Audit{
+public class Personal extends Audit {
     @Id
     private String id;
 
@@ -25,6 +26,7 @@ public class Personal extends Audit{
     private String lastName;
 
     @Email
+    @Indexed(unique=true, sparse=true)
     private String email;
 
     @NotEmpty

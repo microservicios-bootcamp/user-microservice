@@ -1,11 +1,15 @@
 package com.demo.app.user.services.impl;
 
 import com.demo.app.user.entities.Enterprise;
+import com.demo.app.user.models.AccountType;
+import com.demo.app.user.models.PasiveCard;
 import com.demo.app.user.repositories.EnterpriseRepository;
 import com.demo.app.user.services.EnterpriseService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 public class EnterpriseServiceImpl implements EnterpriseService {
@@ -23,6 +27,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
     @Override
     public Mono<Enterprise> save(Enterprise enterprise) {
+        enterprise.getPasiveCards().stream().forEach(card->card.setAccountType(AccountType.CUENTA_CORRIENTE));
         return enterpriseRepository.save(enterprise);
     }
 
@@ -40,6 +45,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
             x.setDni(enterprise.getDni());
             x.setNumber(enterprise.getNumber());
             x.setRuc(enterprise.getRuc());
+            x.setPasiveCards(enterprise.getPasiveCards());
+            x.getPasiveCards().stream().forEach(card->card.setAccountType(AccountType.CUENTA_CORRIENTE));
             return enterpriseRepository.save(x);
         });
     }

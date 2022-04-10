@@ -43,15 +43,18 @@ public class PersonalServiceImpl implements PersonalService {
     @Override
     @Transactional
     public Mono<Personal> save(Personal personal) {
+
         return findPasiveCardByDni(personal.getDni()).flatMap(x->{
-            if(!x) {
-                return Mono.zip(personalRepository.save(personal),createPasiveCard(personal.getPasiveCard()))
+            PasiveCard card = personal.getPasiveCard();
+            card.setDni(personal.getDni());
+            if(!x){
+                return Mono.zip(personalRepository.save(personal),createPasiveCard(card))
                         .map(result->{
-                            result.getT2();
-                            return result.getT1();
+                            result.getT1();
+                            return result.getT2();
                         });
             }
-           return Mono.empty();
+            return Mono.empty();
         }).thenReturn(personal);
     }
 
