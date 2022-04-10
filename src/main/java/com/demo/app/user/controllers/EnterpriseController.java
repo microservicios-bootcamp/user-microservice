@@ -1,6 +1,7 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Enterprise;
+import com.demo.app.user.models.CardType;
 import com.demo.app.user.services.EnterpriseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,9 @@ public class EnterpriseController {
         return enterpriseService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    private ResponseEntity<Mono<Enterprise>> save(@RequestBody Enterprise enterprise){
-        return ResponseEntity.ok(enterpriseService.save(enterprise));
+    @PostMapping("cardType/{type}")
+    private ResponseEntity<Mono<Enterprise>> save(@RequestBody Enterprise enterprise, @PathVariable CardType type){
+        return ResponseEntity.ok(enterpriseService.save(enterprise,type));
     }
     @PutMapping("/{id}")
     private Mono<ResponseEntity<Enterprise>> update(@RequestBody Enterprise enterprise, @PathVariable String id){

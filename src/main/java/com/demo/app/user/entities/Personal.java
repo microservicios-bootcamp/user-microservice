@@ -1,6 +1,6 @@
 package com.demo.app.user.entities;
 
-import com.demo.app.user.models.PasiveCard;
+import com.demo.app.user.models.Card;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -38,5 +38,5 @@ public class Personal extends Audit {
     private String number;
 
     @OneToOne
-    private PasiveCard pasiveCard;
+    private Card card;
 }

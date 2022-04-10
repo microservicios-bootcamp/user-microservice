@@ -1,15 +1,12 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Personal;
-import com.demo.app.user.models.PasiveCard;
+import com.demo.app.user.models.CardType;
 import com.demo.app.user.services.PersonalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/personal")
@@ -30,9 +27,9 @@ public class PersonalController {
         return personalService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    private ResponseEntity<?> save(@RequestBody Personal personal){
-        return ResponseEntity.ok(personalService.save(personal));
+    @PostMapping("/cardType/{type}")
+    private ResponseEntity<?> save(@RequestBody Personal personal,@PathVariable CardType type){
+        return ResponseEntity.ok(personalService.save(personal,type));
     }
     @PutMapping("/{id}")
     private Mono<ResponseEntity<Personal>> update(@RequestBody Personal personal, @PathVariable String id){

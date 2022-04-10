@@ -1,7 +1,9 @@
 package com.demo.app.user.services.impl;
 
 import com.demo.app.user.entities.Personal;
-import com.demo.app.user.models.PasiveCard;
+import com.demo.app.user.models.AccountType;
+import com.demo.app.user.models.Card;
+import com.demo.app.user.models.CardType;
 import com.demo.app.user.repositories.PersonalRepository;
 import com.demo.app.user.services.PersonalService;
 import org.springframework.stereotype.Service;
@@ -29,26 +31,27 @@ public class PersonalServiceImpl implements PersonalService {
         return personalRepository.findAll();
     }
 
-    private Mono<PasiveCard> createPasiveCard(PasiveCard card) {
-        return webClient.post().uri("/pasive").
-                body(Mono.just(card),PasiveCard.class).
-                retrieve().bodyToMono(PasiveCard.class);
+    private Mono<Card> createCard(Card card) {
+        return webClient.post().uri("/card").
+                body(Mono.just(card), Card.class).
+                retrieve().bodyToMono(Card.class);
     }
 
-    private Mono<Boolean> findPasiveCardByDni(String dni){
-        return webClient.get().uri("/pasive/dni/" + dni).
+    private Mono<Boolean> findCardByDniAndCardType(String dni,CardType type){
+        return webClient.get().uri("/card/dni/" + dni+"/type/"+type).
                 retrieve().bodyToMono(Boolean.class);
     }
 
     @Override
     @Transactional
-    public Mono<Personal> save(Personal personal) {
-
-        return findPasiveCardByDni(personal.getDni()).flatMap(x->{
-            PasiveCard card = personal.getPasiveCard();
-            card.setDni(personal.getDni());
+    public Mono<Personal> save(Personal personal,CardType type) {
+        return findCardByDniAndCardType(personal.getDni(),type).flatMap(x->{
             if(!x){
-                return Mono.zip(personalRepository.save(personal),createPasiveCard(card))
+                Card card = personal.getCard();
+                if(type == CardType.CREDITO) card.setAccountType(AccountType.CREDITO);
+                card.setDni(personal.getDni());
+                card.setCardType(type);
+                return Mono.zip(personalRepository.save(personal),createCard(card))
                         .map(result->{
                             result.getT1();
                             return result.getT2();
