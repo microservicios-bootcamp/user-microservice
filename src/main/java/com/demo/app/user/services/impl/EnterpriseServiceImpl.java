@@ -73,10 +73,6 @@ public class EnterpriseServiceImpl implements EnterpriseService {
             x.setDni(enterprise.getDni());
             x.setNumber(enterprise.getNumber());
             x.setRuc(enterprise.getRuc());
-            x.setCards(enterprise.getCards());
-            x.getCards().stream().forEach(card->{
-                if(card.getAccountType() != AccountType.CREDITO) card.setAccountType(AccountType.CUENTA_CORRIENTE);
-            });
             return enterpriseRepository.save(x);
         });
     }
