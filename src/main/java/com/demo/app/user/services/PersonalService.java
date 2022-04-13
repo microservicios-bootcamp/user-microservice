@@ -8,7 +8,9 @@ import reactor.core.publisher.Mono;
 
 public interface PersonalService {
     Flux<Personal> findAll();
-    Mono<Personal> save(Personal personal, CardType type);
+    Mono<Personal> saveSavingAccount(Personal personal);
+    Mono<Personal> saveCurrentAccount(Personal personal);
+    Mono<Personal> saveFixedTermAccount(Personal personal);
     Mono<Personal> findById(String id);
     Mono<Personal> update(Personal personal,String id);
     Mono<Void> delete(String id);

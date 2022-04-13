@@ -28,7 +28,7 @@ public class EnterpriseController {
         return enterpriseService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("cardType/{type}")
+    @PostMapping("saveAccount/{type}")
     private ResponseEntity<Mono<Enterprise>> save(@RequestBody Enterprise enterprise, @PathVariable CardType type){
         return ResponseEntity.ok(enterpriseService.save(enterprise,type));
     }

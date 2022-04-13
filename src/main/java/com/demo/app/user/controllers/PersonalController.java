@@ -1,6 +1,7 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Personal;
+import com.demo.app.user.models.AccountType;
 import com.demo.app.user.models.CardType;
 import com.demo.app.user.services.PersonalService;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,13 @@ public class PersonalController {
         return personalService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/cardType/{type}")
-    private ResponseEntity<?> save(@RequestBody Personal personal,@PathVariable CardType type){
-        return ResponseEntity.ok(personalService.save(personal,type));
+    @PostMapping("/saveAccount/{type}")
+    private ResponseEntity<Mono<Personal>> save(@RequestBody Personal personal,@PathVariable AccountType type){
+        Mono<Personal> result = null;
+        if (type.equals(AccountType.CUENTA_CORRIENTE)) result = personalService.saveCurrentAccount(personal);
+        if (type.equals(AccountType.AHORRO)) result = personalService.saveSavingAccount(personal);
+        if (type.equals(AccountType.PLAZO_FIJO)) result = personalService.saveFixedTermAccount(personal);
+        return ResponseEntity.ok(result);
     }
     @PutMapping("/{id}")
     private Mono<ResponseEntity<Personal>> update(@RequestBody Personal personal, @PathVariable String id){

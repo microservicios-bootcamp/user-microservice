@@ -1,14 +1,16 @@
 package com.demo.app.user.entities;
 
-import com.demo.app.user.models.Card;
+import com.demo.app.user.models.CurrentAccount;
+import com.demo.app.user.models.FixedTermAccount;
+import com.demo.app.user.models.SavingAccount;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.OneToOne;
 import javax.validation.constraints.*;
 
 @JsonPropertyOrder({"id","name","lastName","email","number","dni","createdAt","updateAt"})
@@ -37,6 +39,12 @@ public class Personal extends Audit {
     @Size(min = 9,max = 9)
     private String number;
 
-    @OneToOne
-    private Card card;
+    @Transient
+    private CurrentAccount currentAccount;
+
+    @Transient
+    private FixedTermAccount fixedTermAccount;
+
+    @Transient
+    private SavingAccount savingAccount;
 }

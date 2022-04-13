@@ -2,8 +2,8 @@ package com.demo.app.user.services.impl;
 
 import com.demo.app.user.entities.Enterprise;
 import com.demo.app.user.models.AccountType;
-import com.demo.app.user.models.Card;
 import com.demo.app.user.models.CardType;
+import com.demo.app.user.models.CurrentAccount;
 import com.demo.app.user.repositories.EnterpriseRepository;
 import com.demo.app.user.services.EnterpriseService;
 import org.springframework.stereotype.Service;
@@ -23,15 +23,18 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         this.enterpriseRepository = enterpriseRepository;
         this.webClient = webClient.baseUrl("http://localhost:8022").build();
     }
-    private Mono<Boolean> createCards(List<Card> cards) {
-        return webClient.post().uri("/card/all").
-                body(Flux.fromIterable(cards), Card.class).
-                retrieve().bodyToFlux(Card.class).then(Mono.just(true));
-    }
 
-    private Mono<Boolean> findCardByDniAndCardType(String dni,CardType type){
-        return webClient.get().uri("/card/dni/" + dni+"/type/"+type).
-                retrieve().bodyToMono(Boolean.class);
+    private Mono<Boolean> createCurrentAccount(List<CurrentAccount> cards) {
+        return webClient.post().uri("/currentAccount/all").
+                body(Flux.fromIterable(cards), CurrentAccount.class).
+                retrieve().bodyToFlux(CurrentAccount.class).then(Mono.just(true));
+    }
+    private Mono<Boolean> findAllCurrentAccountByDni(String dni){
+        return webClient.get().uri("/currentAccount/all/dni/" + dni).
+                retrieve().bodyToFlux(CurrentAccount.class).hasElements().flatMap(x->{
+                if(x)return Mono.just(true);
+                return Mono.just(false);
+        });
     }
     @Override
     public Flux<Enterprise> findAll() {
@@ -39,17 +42,17 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     }
 
     @Override
-    public Mono<Enterprise> save(Enterprise enterprise, CardType type) {
-        return findCardByDniAndCardType(enterprise.getDni(),type).flatMap(x->{
+    public Mono<Enterprise> save(Enterprise enterprise,CardType type) {
+        return findAllCurrentAccountByDni(enterprise.getDni()).flatMap(x->{
             if(!x){
-                List<Card> cards = enterprise.getCards();
-                if(type == CardType.DEBITO) cards.stream().forEach(card -> card.setAccountType(AccountType.CUENTA_CORRIENTE));
-                else cards.stream().forEach(card->card.setAccountType(AccountType.CREDITO));
+                Mono<Boolean> accounts;
+                List<CurrentAccount> cards = enterprise.getCards();
                 cards.stream().forEach(card -> {
                     card.setDni(enterprise.getDni());
-                    card.setCardType(type);
                 });
-                return Mono.zip(enterpriseRepository.save(enterprise),createCards(cards))
+                if(type == CardType.DEBITO) accounts=createCurrentAccount(cards);
+                else accounts=createCurrentAccount(cards);
+                return Mono.zip(enterpriseRepository.save(enterprise),accounts)
                         .map(result->{
                             result.getT1();
                             return result.getT2();
