@@ -1,11 +1,11 @@
 package com.demo.app.user.services.impl;
 
 import com.demo.app.user.entities.Enterprise;
-import com.demo.app.user.models.AccountType;
 import com.demo.app.user.models.CardType;
 import com.demo.app.user.models.CurrentAccount;
 import com.demo.app.user.repositories.EnterpriseRepository;
 import com.demo.app.user.services.EnterpriseService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -19,9 +19,9 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     private final EnterpriseRepository enterpriseRepository;
     private final WebClient webClient;
 
-    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository, WebClient.Builder webClient) {
+    public EnterpriseServiceImpl(EnterpriseRepository enterpriseRepository, WebClient.Builder webClient,@Value("${pasive.card}") String pasiveCardUrl) {
         this.enterpriseRepository = enterpriseRepository;
-        this.webClient = webClient.baseUrl("http://localhost:8022").build();
+        this.webClient = webClient.baseUrl(pasiveCardUrl).build();
     }
 
     private Mono<Boolean> createCurrentAccount(List<CurrentAccount> cards) {

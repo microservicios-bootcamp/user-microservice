@@ -6,6 +6,7 @@ import com.demo.app.user.models.FixedTermAccount;
 import com.demo.app.user.models.SavingAccount;
 import com.demo.app.user.repositories.PersonalRepository;
 import com.demo.app.user.services.PersonalService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,9 +21,10 @@ public class PersonalServiceImpl implements PersonalService {
 
     private final WebClient webClient;
 
-    public PersonalServiceImpl(PersonalRepository personalRepository, WebClient.Builder webClient) {
+
+    public PersonalServiceImpl(PersonalRepository personalRepository, WebClient.Builder webClient,@Value("${pasive.card}") String pasiveCardUrl) {
         this.personalRepository = personalRepository;
-        this.webClient = webClient.baseUrl("http://localhost:8022").build();
+        this.webClient = webClient.baseUrl(pasiveCardUrl).build();
     }
 
     @Override
@@ -129,7 +131,6 @@ public class PersonalServiceImpl implements PersonalService {
             x.setName(personal.getName());
             x.setLastName(personal.getLastName());
             x.setEmail(personal.getEmail());
-            x.setDni(personal.getDni());
             x.setNumber(personal.getNumber());
             return personalRepository.save(x);
         });
