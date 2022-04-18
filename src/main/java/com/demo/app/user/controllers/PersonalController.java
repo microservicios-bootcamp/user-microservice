@@ -1,8 +1,7 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Personal;
-import com.demo.app.user.models.AccountType;
-import com.demo.app.user.models.CardType;
+import com.demo.app.user.models.SavingAccountType;
 import com.demo.app.user.services.PersonalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,24 +24,31 @@ public class PersonalController {
     }
     @GetMapping("/{id}")
     private Mono<ResponseEntity<Personal>> findById(@PathVariable String id){
-        return personalService.findById(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
+        return personalService.findById(id).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/saveAccount/{type}")
-    private ResponseEntity<Mono<Personal>> save(@RequestBody Personal personal,@PathVariable AccountType type){
-        Mono<Personal> result = null;
-        if (type.equals(AccountType.CUENTA_CORRIENTE)) result = personalService.saveCurrentAccount(personal);
-        if (type.equals(AccountType.AHORRO)) result = personalService.saveSavingAccount(personal);
-        if (type.equals(AccountType.PLAZO_FIJO)) result = personalService.saveFixedTermAccount(personal);
+    @PostMapping("/saveCurrentAccount")
+    private ResponseEntity<Mono<Personal>> saveCurrentAccount(@RequestBody Personal personal){
+        return ResponseEntity.ok(personalService.saveCurrentAccount(personal));
+    }
+    @PostMapping("/saveSavingAccount/{type}")
+    private ResponseEntity<Mono<Personal>> saveSavingAccount(@RequestBody Personal personal, @PathVariable SavingAccountType type){
+        Mono<Personal> result;
+        if (type.equals(SavingAccountType.NORMAL)) result = personalService.saveNormalSavingAccount(personal);
+        else result = personalService.saveVipSavingAccount(personal);
         return ResponseEntity.ok(result);
+    }
+    @PostMapping("/saveFixedTermAccount")
+    private ResponseEntity<Mono<Personal>> saveFixedTermAccount(@RequestBody Personal personal){
+        return ResponseEntity.ok(personalService.saveFixedTermAccount(personal));
     }
     @PutMapping("/{id}")
     private Mono<ResponseEntity<Personal>> update(@RequestBody Personal personal, @PathVariable String id){
-        return personalService.update(personal,id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
+        return personalService.update(personal,id).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     private Mono<ResponseEntity<Void>> delete(@PathVariable String id){
-        return personalService.delete(id).map(x->ResponseEntity.ok(x)).defaultIfEmpty(ResponseEntity.notFound().build());
+        return personalService.delete(id).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

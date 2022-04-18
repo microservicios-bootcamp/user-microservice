@@ -1,5 +1,6 @@
 package com.demo.app.user.entities;
 
+import com.demo.app.user.models.CreditAccount;
 import com.demo.app.user.models.CurrentAccount;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
@@ -8,6 +9,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.*;
 import java.util.List;
 
@@ -40,7 +43,10 @@ public class Enterprise extends Audit {
     @Email
     private String email;
 
-    @Transient
+    @OneToMany
     private List<CurrentAccount> cards;
+
+    @OneToMany
+    private List<CreditAccount> creditAccounts;
 
 }

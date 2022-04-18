@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.persistence.OneToOne;
 import javax.validation.constraints.*;
 
 @JsonPropertyOrder({"id","name","lastName","email","number","dni","createdAt","updateAt"})
@@ -39,12 +40,12 @@ public class Personal extends Audit {
     @Size(min = 9,max = 9)
     private String number;
 
-    @Transient
+    @OneToOne
     private CurrentAccount currentAccount;
 
-    @Transient
+    @OneToOne
     private FixedTermAccount fixedTermAccount;
 
-    @Transient
+    @OneToOne
     private SavingAccount savingAccount;
 }
