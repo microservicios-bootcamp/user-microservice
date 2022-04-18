@@ -6,7 +6,8 @@ import reactor.core.publisher.Mono;
 
 public interface EnterpriseService {
     Flux<Enterprise> findAll();
-    Mono<Enterprise> saveCurrentAccount(Enterprise enterprise);
+    Mono<Enterprise> saveNormalCurrentAccount(Enterprise enterprise);
+    Mono<Enterprise> savePymeCurrentAccount(Enterprise enterprise);
     Mono<Enterprise> saveCreditAccount(Enterprise enterprise);
     Mono<Enterprise> findById(String id);
     Mono<Enterprise> update(Enterprise enterprise,String id);

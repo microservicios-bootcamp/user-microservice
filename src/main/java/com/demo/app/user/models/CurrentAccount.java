@@ -9,6 +9,7 @@ public class CurrentAccount{
     private BigDecimal balance;
     private TypeCurrency currency;
     private String accountNumber;
+    private CurrentAccountType type;
     private Integer cvc;
     private String dni;
 }

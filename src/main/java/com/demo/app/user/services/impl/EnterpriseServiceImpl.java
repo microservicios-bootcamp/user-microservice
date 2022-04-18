@@ -3,6 +3,7 @@ package com.demo.app.user.services.impl;
 import com.demo.app.user.entities.Enterprise;
 import com.demo.app.user.models.CreditAccount;
 import com.demo.app.user.models.CurrentAccount;
+import com.demo.app.user.models.CurrentAccountType;
 import com.demo.app.user.repositories.EnterpriseRepository;
 import com.demo.app.user.services.EnterpriseService;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,12 +57,14 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         return enterpriseRepository.findAll();
     }
 
-    @Override
-    public Mono<Enterprise> saveCurrentAccount(Enterprise enterprise) {
+    private Mono<Enterprise> findAndSaveCurrentAccount(Enterprise enterprise, CurrentAccountType type) {
         return findAllCurrentAccountByDni(enterprise.getDni()).flatMap(x->{
             if(!x){
                 List<CurrentAccount> cards = enterprise.getCards();
-                cards.forEach(card -> card.setDni(enterprise.getDni()));
+                cards.forEach(card -> {
+                    card.setDni(enterprise.getDni());
+                    card.setType(type);
+                });
                 Mono<Boolean> accounts = createCurrentAccount(cards);
                 return Mono.zip(enterpriseRepository.save(enterprise),accounts)
                         .map(result->{
@@ -71,6 +74,19 @@ public class EnterpriseServiceImpl implements EnterpriseService {
             }
             return Mono.empty();
         }).thenReturn(enterprise);
+    }
+    @Override
+    public Mono<Enterprise> saveNormalCurrentAccount(Enterprise enterprise) {
+        return findAndSaveCurrentAccount(enterprise,CurrentAccountType.NORMAL);
+    }
+
+    @Override
+    public Mono<Enterprise> savePymeCurrentAccount(Enterprise enterprise) {
+        return Mono.zip(findAllCreditAccountByDni(enterprise.getDni()),findAndSaveCurrentAccount(enterprise,CurrentAccountType.PYME))
+                .map(result->{
+                    if(result.getT1().equals(false)) return Mono.empty();
+                    return result.getT2();
+                }).thenReturn(enterprise);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.demo.app.user.controllers;
 
 import com.demo.app.user.entities.Enterprise;
+import com.demo.app.user.entities.Personal;
+import com.demo.app.user.models.CurrentAccountType;
+import com.demo.app.user.models.SavingAccountType;
 import com.demo.app.user.services.EnterpriseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +30,12 @@ public class EnterpriseController {
         return enterpriseService.findById(id).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("saveCurrentAccount")
-    private ResponseEntity<Mono<Enterprise>> saveCurrentAccount(@RequestBody Enterprise enterprise){
-        return ResponseEntity.ok(enterpriseService.saveCurrentAccount(enterprise));
+    @PostMapping("saveCurrentAccount/{type}")
+    private ResponseEntity<Mono<Enterprise>> saveCurrentAccount(@RequestBody Enterprise enterprise,@PathVariable CurrentAccountType type){
+        Mono<Enterprise> result;
+        if (type.equals(CurrentAccountType.NORMAL)) result = enterpriseService.saveNormalCurrentAccount(enterprise);
+        else result = enterpriseService.savePymeCurrentAccount(enterprise);
+        return ResponseEntity.ok(result);
     }
     @PostMapping("saveCreditAccount")
     private ResponseEntity<Mono<Enterprise>> saveCreditAccount(@RequestBody Enterprise enterprise){
