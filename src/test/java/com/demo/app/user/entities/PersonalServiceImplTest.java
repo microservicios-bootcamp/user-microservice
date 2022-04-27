@@ -31,5 +31,19 @@ public class PersonalServiceImplTest {
 		System.out.println(deuda);
 		System.out.println(valorResultado);
 	}
+	
+	@Test
+	public void DebtPay() {
+		String dni = "1234";
+		Double amount = 20.0;
+		String account = "credit acount";
+		Double debtPay = 25.0;
+		Double debt = 5.0;
+		
+		Mono<Double> debPay = serviceTest.DebtPay(dni, amount, account, debtPay);
+		
+		StepVerifier.create(debPay).expectNext(debt).verifyComplete();
+		System.out.println(debtPay);
+	}
 
 }
