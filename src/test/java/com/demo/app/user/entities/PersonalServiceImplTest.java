@@ -43,7 +43,7 @@ public class PersonalServiceImplTest {
 		Mono<Double> debPay = serviceTest.DebtPay(dni, amount, account, debtPay);
 		
 		StepVerifier.create(debPay).expectNext(debt).verifyComplete();
-		System.out.println(debtPay);
+		System.out.println(debPay);
 	}
 
 }
